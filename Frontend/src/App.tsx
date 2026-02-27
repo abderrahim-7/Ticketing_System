@@ -1,10 +1,8 @@
-import { useState } from "react";
-import googleLogo from "./assets/googleLogo.svg";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 function App() {
-  return <Register />;
+  return <Login />;
 }
 
 export default App;

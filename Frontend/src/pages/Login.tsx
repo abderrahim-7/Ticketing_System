@@ -1,13 +1,20 @@
 import { useState } from "react";
 import googleLogo from "../assets/googleLogo.svg";
+import AuthBackground from "../assets/AuthBackground.png"
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+ 
   return (
     <div className="flex w-screen h-screen">
-      <div className="w-1/2 bg-gray-500"></div>
+      <div className="w-1/2 h-screen bg-gray-500 overflow-hidden">
+        <img
+          src={AuthBackground}
+          alt=""
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="w-1/2 bg-white flex flex-col p-10 gap-6">
         <h1
           className="
