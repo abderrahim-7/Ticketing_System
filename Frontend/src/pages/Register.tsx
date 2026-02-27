@@ -1,6 +1,7 @@
 import { useState } from "react";
 import googleLogo from "../assets/googleLogo.svg";
-import AuthBackground from "../assets/AuthBackground.png"
+import AuthBackground from "../assets/AuthBackground.png";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -135,9 +136,11 @@ const Register = () => {
           </button>
           <span className="text-blue-500 ml-20">
             Already have an account,{" "}
-            <span className="text-purple-400 underline hover:text-purple-500 transition-all duration-300 cursor-pointer">
-              Sign In
-            </span>
+            <Link to="/login">
+              <span className="text-purple-400 underline hover:text-purple-500 transition-all duration-300 cursor-pointer">
+                Sign In
+              </span>
+            </Link>
           </span>
         </form>
       </div>

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import googleLogo from "../assets/googleLogo.svg";
-import AuthBackground from "../assets/AuthBackground.png"
+import AuthBackground from "../assets/AuthBackground.png";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
- 
+
   return (
     <div className="flex w-screen h-screen">
       <div className="w-1/2 h-screen bg-gray-500 overflow-hidden">
@@ -111,9 +112,11 @@ const Login = () => {
           </button>
           <span className="text-blue-500 ml-20">
             Don't have an account,{" "}
-            <span className="text-purple-400 underline hover:text-purple-500 transition-all duration-300 cursor-pointer">
-              Sign Up
-            </span>
+            <Link to="/register">
+              <span className="text-purple-400 underline hover:text-purple-500 transition-all duration-300 cursor-pointer">
+                Sign Up
+              </span>
+            </Link>
           </span>
         </form>
       </div>
