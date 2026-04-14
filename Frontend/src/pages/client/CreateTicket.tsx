@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import GlobalLayout from "../../layout/GlobalLayout";
 
 const CreateTicket = () => {
@@ -13,9 +14,21 @@ const CreateTicket = () => {
     "Security Concern",
   ];
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <GlobalLayout>
-      <div className="flex flex-col items-start px-10">
+      <div
+        className={`
+          flex flex-col items-start px-10
+          transition-all duration-500 ease-out
+          ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
+        `}
+      >
         {/* TITLE */}
         <h1 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-5">
           Create Ticket
