@@ -6,7 +6,7 @@ const TopBar = () => {
     <header className="sticky z-1 top-0 w-full h-16 bg-gradient-to-r from-blue-600 to-purple-600 flex items-center px-6">
       <div className="flex-1 flex justify-center">
         <h1 className="text-white text-2xl font-bold tracking-wide">
-          Ticketing System
+          Ticket Flow
         </h1>
       </div>
 
