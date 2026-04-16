@@ -8,7 +8,7 @@ interface Props {
 
 const GlobalLayout = ({ children }: Props) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col z-0">
       {/* Top bar */}
       <TopBar />
 

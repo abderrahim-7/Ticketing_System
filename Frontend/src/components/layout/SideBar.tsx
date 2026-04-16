@@ -38,7 +38,7 @@ const SideBar = ({ role }: Props) => {
   const location = useLocation();
 
   return (
-    <div className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-20 flex flex-col justify-between bg-gradient-to-b from-blue-600 to-purple-600 p-3 shadow-lg">
+    <div className="fixed z-1 top-16 left-0 h-[calc(100vh-4rem)] w-20 flex flex-col justify-between bg-gradient-to-b from-blue-600 to-purple-600 p-3 shadow-lg">
       {" "}
       <div className="flex flex-col gap-4">
         <SidebarButton
