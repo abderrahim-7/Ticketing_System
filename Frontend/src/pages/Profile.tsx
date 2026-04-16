@@ -19,15 +19,16 @@ const Profile = () => {
     <GlobalLayout>
       <div
         className="
-    flex flex-col items-start px-10
-    transition-all duration-500 ease-out gap-5
+    flex flex-col items-start px-10 gap-5
+    opacity-0 animate-[pageIn_0.6s_ease-out_forwards]
   "
       >
-        <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-8 opacity-0 animate-[fadeUp_0.5s_ease-out_0.1s_forwards]">
           Profile
         </h1>
+
         {/* General Infos */}
-        <div className="w-full bg-white rounded-2xl shadow-lg p-6 flex">
+        <div className="w-full bg-white rounded-2xl shadow-lg p-6 flex opacity-0 animate-[fadeUp_0.5s_ease-out_0.2s_forwards]">
           <div className="flex flex-col p-5 gap-4 w-[20%] items-center">
             <div className="w-[90%] aspect-square rounded-full p-[2px] bg-gradient-to-r from-blue-500 to-purple-600">
               <img
@@ -95,14 +96,14 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
         {(currentUser.role === "user" || currentUser.role === "agent") && (
-          <div className="w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6">
+          <div className="w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6 opacity-0 animate-[fadeUp_0.5s_ease-out_0.3s_forwards]">
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
               Statistics
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* USER STATS */}
               {currentUser.role === "user" && (
                 <>
                   <StatCard
@@ -136,7 +137,6 @@ const Profile = () => {
                 </>
               )}
 
-              {/* AGENT STATS */}
               {currentUser.role === "agent" && (
                 <>
                   <StatCard
@@ -164,15 +164,14 @@ const Profile = () => {
             </div>
           </div>
         )}
+
         {currentUser.role === "agent" && (
-          <div className="w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6">
-            {/* TITLE */}
+          <div className="w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6 opacity-0 animate-[fadeUp_0.5s_ease-out_0.4s_forwards]">
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
               Expertise
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* CATEGORIES */}
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-gray-700 font-semibold">
                   <Tag size={18} className="text-purple-600" />
@@ -186,7 +185,7 @@ const Profile = () => {
                       className="
                 px-3 py-1 text-sm rounded-full
                 bg-purple-100 text-purple-700
-                hover:bg-purple-200 transition
+                transition
               "
                     >
                       {cat}
@@ -195,7 +194,6 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* SKILLS */}
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2 text-gray-700 font-semibold">
                   <Wrench size={18} className="text-blue-600" />
@@ -209,7 +207,7 @@ const Profile = () => {
                       className="
                 px-3 py-1 text-sm rounded-full
                 bg-blue-100 text-blue-700
-                hover:bg-blue-200 transition
+                transition
               "
                     >
                       {skill}
@@ -221,6 +219,19 @@ const Profile = () => {
           </div>
         )}
       </div>
+
+      {/* animations */}
+      <style>{`
+        @keyframes pageIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </GlobalLayout>
   );
 };
