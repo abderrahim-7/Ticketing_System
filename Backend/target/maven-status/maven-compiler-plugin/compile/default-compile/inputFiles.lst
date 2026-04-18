@@ -1,0 +1,13 @@
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/DemoApplication.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/Entity/Role.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/Entity/User.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/config/SecurityConfig.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/controller/UserController.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/dto/RegisterResponse.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/exception/EmailAlreadyExistsException.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/exception/GlobalException.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/repository/UserRepository.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/security/HashPassword.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/service/EmailService.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/service/UserService.java
+/home/soufiane/Desktop/something/Backend/src/main/java/com/example/demo/service/VerificationService.java
