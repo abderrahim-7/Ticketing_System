@@ -152,13 +152,6 @@ Key configuration properties:
 - JJWT (JSON Web Tokens)
 - Lombok
 
-## Testing
-
-Run tests with:
-```bash
-./mvnw test
-```
-
 ## Contributing
 
 1. Fork the repository.
