@@ -23,7 +23,7 @@ const Profile = () => {
     opacity-0 animate-[pageIn_0.6s_ease-out_forwards]
   "
       >
-        <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-8 opacity-0 animate-[fadeUp_0.5s_ease-out_0.1s_forwards]">
+        <h1 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-6 opacity-0 animate-[fadeUp_0.5s_ease-out_0.1s_forwards]">
           Profile
         </h1>
 
