@@ -27,11 +27,6 @@ public class UserController {
 
    
 
-  
-    
-
-
-
    
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody User user) {

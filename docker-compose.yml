@@ -1,0 +1,50 @@
+
+
+version : '3.8'
+
+services: 
+  backend: 
+    image: soufiane200/spring-app:1.0.1
+    networks:
+      - myNetwork
+    ports: 
+      - 8080:8080
+    container_name : backend
+
+    env_file:
+      - ./Backend/.env
+
+    depends_on: 
+      - mysql
+      - redis
+
+  mysql:
+    image : mysql
+    container_name : mydatabase
+    volumes:
+      - myData:/var/lib/mysql
+    ports : 
+      - 3307:3306
+    networks :
+      - myNetwork
+
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: test
+    
+  redis: 
+    image : redis
+    container_name : redis-container
+    ports : 
+      - 6379:6379
+    networks: 
+      - myNetwork
+
+volumes : 
+  myData:
+      driver : local
+
+networks:
+  myNetwork :
+       driver : bridge
+

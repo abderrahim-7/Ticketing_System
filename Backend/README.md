@@ -13,70 +13,89 @@ This is a Spring Boot-based authentication service that provides user registrati
 
 ## Prerequisites
 
-- Java 17 or higher
-- Maven 3.6+
-- MySQL 8.0+
-- Redis 6.0+
-- Gmail account for email services (or configure another SMTP provider)
+- Docker and Docker Compose
+- A Gmail account with App Password generated
 
-## Setup
+## Getting Started
 
-1. **Clone the repository:**
+### Step 1: Obtain a Gmail Account
+
+If you don't already have a Gmail account, follow these steps:
+
+1. Go to [Gmail Sign Up](https://accounts.google.com/signup)
+2. Fill in your personal information (first name, last name)
+3. Create a username (your Gmail address)
+4. Create a strong password
+5. Verify your phone number
+6. Accept Google's Terms of Service and Privacy Policy
+7. Complete the setup
+
+### Step 2: Generate Gmail App Password
+
+This application uses Gmail to send emails (for verification and password reset). You need to generate an App Password:
+
+1. Go to [Google Account Settings](https://myaccount.google.com/)
+2. Click on **Security** in the left menu
+3. Enable **2-Step Verification** (if not already enabled):
+   - Click "2-Step Verification"
+   - Follow the prompts to add your phone number
+4. After 2-Step Verification is enabled, go back to **Security**
+5. Scroll down and find **App passwords** section
+6. Select **Mail** as the app and **Windows (or your operating system)** as the device
+7. Google will generate a 16-character password (example: `mjez wugc ilkn ztsa`)
+8. Copy this password and save it safely
+
+### Step 3: Configure Environment Variables
+
+1. Navigate to the `Backend` folder
+2. Copy the `.env.example` file to `.env`:
    ```bash
-   git clone <repository-url>
-   cd Backend
+   cp .env.example .env
+   ```
+3. Edit the `.env` file with your Gmail credentials:
+   ```
+   MAIL_USERNAME=your-gmail@gmail.com
+   MAIL_PASSWORD=mjez wugc ilkn ztsa  # Your 16-character app password
    ```
 
-2. **Configure the database:**
-   - Create a MySQL database named `test`.
-   - Update the database credentials in `src/main/resources/application.properties`:
-     ```
-     spring.datasource.username=your-username
-     spring.datasource.password=your-password
-     ```
+### Step 4: Run the Application with Docker
 
-3. **Configure Redis:**
-   - Ensure Redis is running on localhost:6379 (default).
+Make sure you're in the root directory of the project (where `docker-compose.yml` is located).
 
-4. **Configure email service:**
-   - Use a Gmail account.
-   - Enable 2-Step Verification on your Gmail account.
-   - Generate an App Password:
-     - Go to [Google Account settings](https://myaccount.google.com/).
-     - Select "Security" > "Signing in to Google" > "App passwords".
-     - Generate a password for "Mail" (this will give you a 16-character password like `mjez wugc ilkn ztsa`).
-   - Update `application.properties`:
-     ```
-     spring.mail.username=your-gmail@gmail.com
-     spring.mail.password=your-app-password
-     ```
-
-5. **Set environment variables (optional):**
-   - `FRONTEND_URL`: URL of the frontend application (default: http://localhost:45678).
-   - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: For admin user creation.
-
-## Build and Run
-
-1. **Build the project:**
+1. **Start all services (Backend, MySQL, Redis):**
    ```bash
-   ./mvnw clean compile
+   docker-compose up
    ```
 
-2. **Run the application:**
+   The application will be available at: `http://localhost:8080`
+
+2. **Stop all services:**
    ```bash
-   ./mvnw spring-boot:run
+   docker-compose down
    ```
 
-The application will start on `http://localhost:8080`.
+3. **Run in detached mode (background):**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **View logs:**
+   ```bash
+   docker-compose logs -f backend
+   ```
+
+### Services Included
+
+- **Backend**: Spring Boot application running on port 8080
+- **MySQL**: Database service on port 3307 (maps to 3306 inside container)
+- **Redis**: Cache service on port 6379
 
 ## API Endpoints
 
-### Authentication
+### POST /register
+Create a new user account.
 
-#### POST /register
-Registers a new user.
-
-**Request Body:**
+Request body:
 ```json
 {
   "username": "string",
@@ -86,7 +105,7 @@ Registers a new user.
 }
 ```
 
-**Response (200 OK):**
+Response (200 OK):
 ```json
 {
   "message": "User registered successfully. Please check your email for verification.",
@@ -96,22 +115,21 @@ Registers a new user.
 }
 ```
 
-**Response (400 Bad Request):** Error message if registration fails.
+### GET /verify
+Verify a user email using the token sent by email.
 
-#### GET /verify
-Verifies user email using token.
+Query parameters:
+- `token`: verification token
 
-**Query Parameters:**
-- `token`: Verification token sent via email.
+Response (200 OK):
+```
+Email verified successfully.
+```
 
-**Response (200 OK):** "Email verified successfully."
+### POST /login
+Authenticate a user and return a JWT token.
 
-**Response (400 Bad Request):** "Invalid or expired token."
-
-#### POST /login
-Logs in a user and returns JWT token.
-
-**Request Body:**
+Request body:
 ```json
 {
   "email": "string",
@@ -119,7 +137,7 @@ Logs in a user and returns JWT token.
 }
 ```
 
-**Response (200 OK):**
+Response (200 OK):
 ```json
 {
   "id": 1,
@@ -128,38 +146,36 @@ Logs in a user and returns JWT token.
 }
 ```
 
-**Response (401 Unauthorized):** "Invalid credentials."
+### POST /forget-password
+Send a password reset email to the given address.
 
-### Password Management
-
-#### POST /forget-password
-Sends password reset email.
-
-**Request Body:**
+Request body:
 ```json
 {
   "email": "string"
 }
 ```
 
-**Response (200 OK):** "Password reset email sent."
+Response (200 OK):
+```
+Password reset email sent.
+```
 
-**Response (400 Bad Request):** "Email not found."
+### GET /validate-reset-token
+Check whether a password reset token is valid.
 
-#### GET /validate-reset-token
-Validates reset token.
+Query parameters:
+- `token`: reset token
 
-**Query Parameters:**
-- `token`: Reset token.
+Response (200 OK):
+```
+Token is valid.
+```
 
-**Response (200 OK):** "Token is valid."
+### POST /reset-password
+Reset the user password using a valid reset token.
 
-**Response (400 Bad Request):** "Invalid or expired token."
-
-#### POST /reset-password
-Resets user password.
-
-**Request Body:**
+Request body:
 ```json
 {
   "token": "string",
@@ -167,22 +183,21 @@ Resets user password.
 }
 ```
 
-**Response (200 OK):** "Password reset successfully."
+Response (200 OK):
+```
+Password reset successfully.
+```
 
-**Response (400 Bad Request):** "Invalid token or password."
+### GET /profil
+Retrieve a user profile by user ID.
 
-### User Profile
+Query parameters:
+- `id`: user ID
 
-#### GET /profil
-Retrieves user profile.
+Headers:
+- `Authorization: Bearer {jwt-token}`
 
-**Query Parameters:**
-- `id`: User ID.
-
-**Headers:**
-- `Authorization`: Bearer {jwt-token}
-
-**Response (200 OK):**
+Response (200 OK):
 ```json
 {
   "id": 1,
@@ -194,9 +209,8 @@ Retrieves user profile.
 }
 ```
 
-**Response (401 Unauthorized):** If not authenticated.
-
-**Response (404 Not Found):** If user not found.
+Response (401 Unauthorized): If the JWT token is missing or invalid.
+Response (404 Not Found): If the user ID does not exist.
 
 ## Configuration
 
@@ -218,7 +232,6 @@ Key configuration properties:
 - Uses Spring Security for authentication and authorization.
 - JWT tokens are required for protected endpoints.
 - Passwords are securely hashed.
-- CORS is configured for frontend integration.
 
 ## Dependencies
 

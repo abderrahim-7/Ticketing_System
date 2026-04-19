@@ -24,7 +24,7 @@ public class User {
     private boolean isEnabled; 
 
     @Enumerated(EnumType.STRING)
-    private Role Role;
+    private Role role;
 
 
 
