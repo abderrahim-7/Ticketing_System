@@ -24,7 +24,8 @@ jobs:
         with:
           context: ./Frontend
           push: true
-          tags: |
-            abderrahim717/ticketing_frontend:latest
+          tags: abderrahim717/ticketing_frontend:latest
+          build-args: |
+            CACHEBUST=${{ github.sha }}
           cache-from: type=registry,ref=abderrahim717/ticketing_frontend:cache
           cache-to: type=registry,ref=abderrahim717/ticketing_frontend:cache,mode=max
