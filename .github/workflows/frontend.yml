@@ -22,7 +22,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./Frontend
           push: true
           tags: |
             abderrahim717/ticketing_frontend:latest
