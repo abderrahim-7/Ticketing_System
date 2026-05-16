@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageCircle, Check } from "lucide-react";
+import { UserPlus, X } from "lucide-react";
 
 interface Props {
   name: string;
@@ -8,24 +8,25 @@ interface Props {
   agent: string;
   user: string;
   status: "pending" | "in progress" | "rejected" | "done";
-  role: "user" | "agent" | "admin";
+
+  onReject: () => void;
+  onAssign: () => void;
 }
 
-const Ticket = ({
+const AssignTicket = ({
   name,
   category,
   description,
   agent,
   user,
   status,
-  role,
+  onReject,
+  onAssign,
 }: Props) => {
   const [expanded, setExpanded] = useState(false);
 
   const MAX_LENGTH = 80;
   const isLong = description.length > MAX_LENGTH;
-
-  const isAgent = role === "agent";
 
   const statusColors: any = {
     pending: "bg-yellow-100 text-yellow-700",
@@ -41,7 +42,6 @@ const Ticket = ({
         <div>
           <h2 className="text-base font-semibold text-gray-800">{name}</h2>
 
-          {/* DESCRIPTION INLINE */}
           <div className="text-sm text-gray-500 max-w-[80%]">
             {expanded || !isLong
               ? description
@@ -75,60 +75,42 @@ const Ticket = ({
       {/* BOTTOM ROW */}
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-3 flex-wrap">
-          {/* CATEGORY */}
+          {/* CATEGORY (same style as your original) */}
           <span className="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs">
             {category}
           </span>
 
-          {/* AGENT */}
-          {(role === "user" || role === "admin") && (
-            <span className="text-gray-600">
-              <span className="font-medium">Agent:</span>{" "}
-              {agent === "" ? "----" : agent}
-            </span>
-          )}
-
           {/* USER */}
-          {(role === "agent" || role === "admin") && (
-            <span className="text-gray-600">
-              <span className="font-medium">User:</span> {user}
-            </span>
-          )}
+          <span className="text-gray-600">
+            <span className="font-medium">User:</span> {user}
+          </span>
+
+          {/* AGENT */}
+          <span className="text-gray-600">
+            <span className="font-medium">Agent:</span>{" "}
+            {agent === "" ? "----" : agent}
+          </span>
         </div>
 
         {/* ACTIONS */}
         <div className="flex items-center gap-2">
-          {/* MARK AS DONE (only for agent) */}
-          {isAgent && status !== "done" && (
-            <abbr title="Mark ticket as done">
-              <button className="p-2 cursor-pointer rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition">
-                <Check size={18} />
-              </button>
-            </abbr>
-          )}
-
-          {/* CONTACT BUTTON */}
-          <abbr
-            title={
-              agent === "" || status === "rejected" || status === "done"
-                ? "No contact available"
-                : `Contact ${role === "user" ? "agent" : "user"}`
-            }
-          >
+          {/* REJECT */}
+          <abbr title="Reject ticket">
             <button
-              disabled={
-                agent === "" || status === "rejected" || status === "done"
-              }
-              className={`
-                p-2 rounded-lg text-white transition
-                ${
-                  agent === "" || status === "rejected" || status === "done"
-                    ? "bg-green-400 opacity-50 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600 cursor-pointer"
-                }
-              `}
+              onClick={onReject}
+              className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition cursor-pointer"
             >
-              <MessageCircle size={18} />
+              <X size={18} />
+            </button>
+          </abbr>
+
+          {/* ASSIGN */}
+          <abbr title="Assign ticket">
+            <button
+              onClick={onAssign}
+              className="p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition cursor-pointer"
+            >
+              <UserPlus size={18} />
             </button>
           </abbr>
         </div>
@@ -137,4 +119,4 @@ const Ticket = ({
   );
 };
 
-export default Ticket;
+export default AssignTicket;
