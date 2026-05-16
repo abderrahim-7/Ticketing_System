@@ -19,7 +19,7 @@ services:
       - redis
 
   frontend:
-    image: abderrahim717/ticketing_frontend
+    image: abderrahim717/ticketing_frontend:4da66bc9dbb0567b0cd8984e0e3d8750503da148
     networks:
       - myNetwork
     ports: 
