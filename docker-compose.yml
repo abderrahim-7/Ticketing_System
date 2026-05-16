@@ -39,7 +39,7 @@ services:
       - myNetwork
 
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: test
     
   redis: 
