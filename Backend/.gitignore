@@ -76,7 +76,7 @@ ehthumbs.db
 Thumbs.db
 
 # Application specific
-application.properties
+
 application-local.properties
 *.log
 logs/
