@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import GlobalLayout from "../layout/GlobalLayout";
 import ProfileImage from "../assets/profileImage.png";
-import { user } from "../1data/user";
 import { MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

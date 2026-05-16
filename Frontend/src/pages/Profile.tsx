@@ -1,7 +1,7 @@
 import React from "react";
 import GlobalLayout from "../layout/GlobalLayout";
 import ProfileImage from "../assets/profileImage.png";
-import { user, agent, admin } from "../1data/user";
+import { user } from "../1data/user";
 import {
   CheckCircle,
   Clock,
@@ -14,6 +14,8 @@ import {
 
 const Profile = () => {
   const currentUser = user;
+  const categories = ["Technical Issue", "Security", "Network"];
+  const skills = ["Linux", "Docker", "Networking", "Troubleshooting"];
 
   return (
     <GlobalLayout>
@@ -142,21 +144,21 @@ const Profile = () => {
                   <StatCard
                     icon={CheckCircle}
                     label="Solved"
-                    value={currentUser.solvedTickets}
+                    value={15}
                     color="green"
                   />
 
                   <StatCard
                     icon={Clock}
                     label="Avg Time"
-                    value={currentUser.AvgTime}
+                    value={"45min"}
                     color="blue"
                   />
 
                   <StatCard
                     icon={Star}
                     label="Rating"
-                    value={currentUser.rating}
+                    value={"4.5"}
                     color="purple"
                   />
                 </>
@@ -179,7 +181,7 @@ const Profile = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {currentUser.categories.map((cat: string, index: number) => (
+                  {categories.map((cat: string, index: number) => (
                     <span
                       key={index}
                       className="
@@ -201,7 +203,7 @@ const Profile = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {currentUser.skills.map((skill: string, index: number) => (
+                  {skills.map((skill: string, index: number) => (
                     <span
                       key={index}
                       className="
