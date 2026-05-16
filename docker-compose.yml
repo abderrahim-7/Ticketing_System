@@ -23,7 +23,7 @@ services:
     networks:
       - myNetwork
     ports: 
-      - 3000:3000
+      - 3000:80
     container_name : frontend
 
 
