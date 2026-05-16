@@ -26,6 +26,5 @@ jobs:
           push: true
           tags: |
             abderrahim717/ticketing_backend:latest
-            abderrahim717/ticketing_backend:${{ github.sha }}
           cache-from: type=registry,ref=abderrahim717/ticketing_backend:cache
           cache-to: type=registry,ref=abderrahim717/ticketing_backend:cache,mode=max
