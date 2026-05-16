@@ -19,9 +19,9 @@ jobs:
         with:
           filters: |
             frontend:
-              - 'frontend/**'
+              - 'Frontend/**'
             backend:
-              - 'backend/**'
+              - 'Backend/**'
 
   call-frontend:
     needs: detect-changes
