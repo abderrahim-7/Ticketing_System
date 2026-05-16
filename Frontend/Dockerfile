@@ -10,6 +10,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy project files
+ARG CACHEBUST=1 
 COPY . .
 
 # Build the app

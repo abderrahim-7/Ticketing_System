@@ -4,7 +4,7 @@ version : '3.8'
 
 services: 
   backend: 
-    image: abderrahim717/ticketing_backend
+    image: abderrahim717/ticketing_backend:latest
     networks:
       - myNetwork
     ports: 
@@ -19,7 +19,7 @@ services:
       - redis
 
   frontend:
-    image: abderrahim717/ticketing_frontend
+    image: abderrahim717/ticketing_frontend:latest
     networks:
       - myNetwork
     ports: 
