@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Entity
@@ -33,6 +34,10 @@ public class Agent extends User{
         inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
     private Set<Skill> skills;
+
+
+    @OneToMany(mappedBy = "agent")
+    private Set<Ticket> assignedTickets;
 
 
 

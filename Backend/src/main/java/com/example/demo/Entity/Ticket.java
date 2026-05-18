@@ -47,4 +47,26 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
 
+
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private User user; 
+
+
+    @ManyToOne
+    @JoinColumn(name = "id_agent")
+    private Agent agent;
+
+
+
+
+
+    
+
+    
+
+
 }
