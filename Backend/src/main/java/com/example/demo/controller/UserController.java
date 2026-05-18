@@ -68,11 +68,6 @@ public class UserController {
     }
 
 
-    @GetMapping("/profil")
-    public ResponseEntity<User> profil(@RequestParam Long id) {
-        
-        return userService.getProfil(id);
-    }
     
 
 

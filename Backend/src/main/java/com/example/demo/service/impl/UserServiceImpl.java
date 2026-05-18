@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.Entity.Agent;
 import com.example.demo.Entity.Role;
 import com.example.demo.Entity.User;
 import com.example.demo.dto.ForgetPasswordRequest;
@@ -18,6 +19,7 @@ import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.exception.EmailAlreadyExistsException;
 import com.example.demo.exception.EmailNotFound;
 import com.example.demo.exception.InvalidCredentialsException;
+import com.example.demo.repository.AgentRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.HashPassword;
 import com.example.demo.security.JWTUtil;
@@ -45,6 +47,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JWTUtil jwtUtil;
 
+    @Autowired
+    private AgentRepository agentRepository;
+
 
     @Transactional
     public ResponseEntity<RegisterResponse> register(User user) {
@@ -53,7 +58,25 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        User newUser= new User();
+
+
+        
+        
+
+
+        
+        Role role = user.getRole();
+
+
+
+
+
+
+
+        User newUser= role==Role.USER ? new User() : new Agent();
+
+
+
 
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
@@ -61,7 +84,18 @@ public class UserServiceImpl implements UserService {
         newUser.setEnabled(false);
         newUser.setRole((Role) user.getRole());
 
-        User savedUser = userRepository.save(newUser);
+        if(role == Role.AGENT){
+            ((Agent) newUser).setActive(false);
+            ((Agent) newUser).setRating(3.0);
+            ((Agent) newUser).setCategories(((Agent) user).getCategories());
+            ((Agent) newUser).setSkills(((Agent) user).getSkills());
+
+
+        }
+
+        User savedUser = role == Role.USER? userRepository.save(newUser): agentRepository.save(((Agent) newUser));
+
+        
 
 
 
@@ -212,12 +246,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public ResponseEntity<User> getProfil(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-
-        return ResponseEntity.ok(user);
-    }
-
+    
 
 
 }

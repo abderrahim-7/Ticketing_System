@@ -1,10 +1,9 @@
 package com.example.demo.Entity;
 
-
-
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.ManyToAny;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,32 +12,26 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Entity
 @Data
-@Inheritance(strategy = InheritanceType.JOINED)
-public class User {
+public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String email;
-    private String password;
-    private boolean isEnabled; 
 
 
+    private String title;
 
-    // 
+    private String description;
 
-    private String phoneNumber;
 
-    private String departement;
-
-    private String jobTitle;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
 
     @CreationTimestamp
@@ -46,18 +39,20 @@ public class User {
     private LocalDateTime createdAt;
 
 
-    private LocalDateTime lastLogin;
+    private LocalDateTime resolvedDate;
+
+
+    @ManyToOne
+    @JoinColumn(name = "id_category")
+    private Category category;
+
+
 
 
 
 
     
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-
-
-
+    
 
 }
