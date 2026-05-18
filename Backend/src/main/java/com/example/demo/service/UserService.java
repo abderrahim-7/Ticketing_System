@@ -16,5 +16,4 @@ public interface UserService {
     ResponseEntity<String> forgetPassword(ForgetPasswordRequest request);
     ResponseEntity<String> resetPassword(ResetPasswordRequest request);
     ResponseEntity<LoginResponse> login(LoginRequest request);
-    ResponseEntity<User> getProfil(Long id);
 }
