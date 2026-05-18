@@ -52,4 +52,7 @@ public class User {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Ticket> tickets = new ArrayList();
+
 }

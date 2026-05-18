@@ -192,6 +192,5 @@ public class UserServiceImpl implements UserService {
         response.setToken(token);
         return ResponseEntity.ok().body(response);
 
-    }
 
-}
+}}
