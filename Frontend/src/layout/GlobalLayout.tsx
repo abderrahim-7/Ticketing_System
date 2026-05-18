@@ -13,7 +13,7 @@ const GlobalLayout = ({ children }: Props) => {
 
       {/* Main area */}
       <div className="flex flex-1">
-        <SideBar role={"admin"} />
+        <SideBar role={"agent"} />
 
         {/* Page content */}
         <main className="flex-1 ml-20 p-4 bg-gray-50 min-h-[calc(100vh-4rem)]">

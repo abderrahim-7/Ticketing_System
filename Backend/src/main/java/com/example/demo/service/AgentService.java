@@ -1,8 +1,14 @@
 package com.example.demo.service;
 
-public interface AgentService {
-    public String getAssignedTickets(Long id);
+import java.util.List;
 
-    public String solveTicket(Long id, Long ticketId);
+import com.example.demo.Entity.Ticket;
+
+public interface AgentService {
+    public List<Ticket> getAssignedTickets(Long id, int limit, int page);
+
+    public boolean getSolvedTickets(Long id);
+
+    public boolean solveTicket(Long id, Long ticketId);
 
 }
