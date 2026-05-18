@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.ManyToAny;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,43 +24,27 @@ import lombok.Data;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     private String title;
 
     private String description;
 
-
     @Enumerated(EnumType.STRING)
     private Status status;
 
-
     @CreationTimestamp
-    @Column(nullable = false , updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-
     private LocalDateTime resolvedDate;
-
 
     @ManyToOne
     @JoinColumn(name = "id_category")
     private Category category;
 
-
-
-    @OneToMany (mappedBy = "ticket" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
-
-
-
-
-
-
-    
-
-    
 
 }

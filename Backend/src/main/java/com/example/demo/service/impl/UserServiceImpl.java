@@ -27,8 +27,6 @@ import com.example.demo.service.EmailService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.VerificationService;
 
-
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -50,32 +48,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AgentRepository agentRepository;
 
-
     @Transactional
     public ResponseEntity<RegisterResponse> register(Agent user) {
 
-        if(userRepository.existsByEmail(user.getEmail())){
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-
-
-        
-        
-
-
-        
         Role role = user.getRole();
-
 
         Agent newUser = new Agent();
 
-        
-
-        //User newUser= role==Role.USER ? new User() : new Agent();
-
-       
-
+        // User newUser= role==Role.USER ? new User() : new Agent();
 
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
@@ -83,35 +67,21 @@ public class UserServiceImpl implements UserService {
         newUser.setEnabled(false);
         newUser.setRole((Role) user.getRole());
 
-        if(role == Role.AGENT){
+        if (role == Role.AGENT) {
             newUser.setActive(false);
             newUser.setRating(3.0);
             newUser.setCategories(((Agent) user).getCategories());
             newUser.setSkills(((Agent) user).getSkills());
 
-
         }
 
-        User savedUser = role == Role.USER? userRepository.save(newUser): agentRepository.save(((Agent) newUser));
-
-        
-
-
-
-        
+        User savedUser = role == Role.USER ? userRepository.save(newUser) : agentRepository.save(((Agent) newUser));
 
         String token = UUID.randomUUID().toString();
 
-       
         verificationService.saveToken(token, savedUser.getEmail());
 
-        
         emailService.sendVerificationEmail(savedUser.getEmail(), token);
-
-
-
-
-
 
         RegisterResponse response = new RegisterResponse();
         response.setMessage("User registered successfully");
@@ -121,27 +91,19 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.ok(response);
 
-
-
-
-
-
-        
-    
     }
-
 
     public ResponseEntity<String> EnableUser(String token) {
 
         String email = verificationService.getEmail(token);
 
-        if(email == null){
+        if (email == null) {
             return ResponseEntity.badRequest().body("Invalid or expired token");
         }
 
         User user = userRepository.findByEmail(email);
 
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
 
@@ -154,8 +116,6 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
-
     public ResponseEntity<String> validateResetToken(String token) {
 
         String email = verificationService.getResetEmail(token);
@@ -167,15 +127,13 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.ok("Token is valid.");
 
-    }   
-
+    }
 
     public ResponseEntity<String> forgetPassword(ForgetPasswordRequest request) {
 
-
         User user = userRepository.findByEmail(request.getEmail());
-        
-        if(user == null ||!user.isEnabled() ){
+
+        if (user == null || !user.isEnabled()) {
             return ResponseEntity.ok().body("if this email exists you will recieve a reset link");
         }
 
@@ -185,25 +143,22 @@ public class UserServiceImpl implements UserService {
 
         emailService.sendResetPasswordEmail(request.getEmail(), token);
 
-
         return ResponseEntity.ok("if this email exists you will recieve a reset link");
-
-
 
     }
 
-    public ResponseEntity<String> resetPassword(ResetPasswordRequest request){
+    public ResponseEntity<String> resetPassword(ResetPasswordRequest request) {
 
         String email = verificationService.getResetEmail(request.getToken());
 
-        if(email == null){
+        if (email == null) {
             return ResponseEntity.badRequest().body("Invalid or expired token");
 
         }
 
         User user = userRepository.findByEmail(email);
 
-        if(user == null){
+        if (user == null) {
             throw new EmailNotFound("User not found");
         }
 
@@ -217,35 +172,26 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
-
-
-    public ResponseEntity<LoginResponse> login(LoginRequest request){
+    public ResponseEntity<LoginResponse> login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail());
 
-        if(user==null || !user.isEnabled()){
+        if (user == null || !user.isEnabled()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        if(!hashPassword.passwordEncoder().matches(request.getPassword(), user.getPassword())){
+        if (!hashPassword.passwordEncoder().matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
         LoginResponse response = new LoginResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
-        
-        String token = jwtUtil.generateToken(user.getEmail());
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getId());
         response.setToken(token);
         return ResponseEntity.ok().body(response);
 
-        
-
     }
-
-
-    
-
 
 }
