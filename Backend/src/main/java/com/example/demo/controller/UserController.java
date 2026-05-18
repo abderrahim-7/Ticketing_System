@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.Entity.Agent;
 import com.example.demo.Entity.User;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
@@ -29,7 +30,7 @@ public class UserController {
 
    
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody User user) {
+    public ResponseEntity<RegisterResponse> register(@RequestBody Agent user) {
         return userService.register(user);
         
     }

@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
-    public ResponseEntity<RegisterResponse> register(User user) {
+    public ResponseEntity<RegisterResponse> register(Agent user) {
 
         if(userRepository.existsByEmail(user.getEmail())){
             throw new EmailAlreadyExistsException("Email already exists");
@@ -68,14 +68,13 @@ public class UserServiceImpl implements UserService {
         Role role = user.getRole();
 
 
+        Agent newUser = new Agent();
 
+        
 
+        //User newUser= role==Role.USER ? new User() : new Agent();
 
-
-
-        User newUser= role==Role.USER ? new User() : new Agent();
-
-
+       
 
 
         newUser.setUsername(user.getUsername());
@@ -85,10 +84,10 @@ public class UserServiceImpl implements UserService {
         newUser.setRole((Role) user.getRole());
 
         if(role == Role.AGENT){
-            ((Agent) newUser).setActive(false);
-            ((Agent) newUser).setRating(3.0);
-            ((Agent) newUser).setCategories(((Agent) user).getCategories());
-            ((Agent) newUser).setSkills(((Agent) user).getSkills());
+            newUser.setActive(false);
+            newUser.setRating(3.0);
+            newUser.setCategories(((Agent) user).getCategories());
+            newUser.setSkills(((Agent) user).getSkills());
 
 
         }
