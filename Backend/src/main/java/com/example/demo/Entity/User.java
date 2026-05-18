@@ -69,7 +69,7 @@ public class User {
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Ticket> tickets = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList();
 
 
 
