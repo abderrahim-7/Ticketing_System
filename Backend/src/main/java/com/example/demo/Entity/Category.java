@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,21 +17,16 @@ import lombok.Data;
 @Entity
 public class Category {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    private String name; 
+    private String name;
 
     private String description;
 
-
     @ManyToMany(mappedBy = "categories")
     private Set<Agent> agents = new HashSet<>();
-
-
 
     @OneToMany(mappedBy = "category")
     private List<Ticket> tickets = new ArrayList<>();
