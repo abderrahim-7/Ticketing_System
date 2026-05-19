@@ -1,17 +1,20 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.Entity.Category;
+import com.example.demo.Entity.Skill;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.Agent.AgentProfileResponse;
 import com.example.demo.dto.Agent.AgentStatisticsResponse;
@@ -19,7 +22,6 @@ import com.example.demo.security.JWTUtil;
 import com.example.demo.service.impl.AgentServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/agent")
@@ -39,6 +41,37 @@ public class AgentController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<Boolean> updateProfile(HttpServletRequest request,
+            @RequestBody AgentProfileResponse profile) {
+        Long userId = jwtUtil.extractUserIdFromRequest(request);
+        boolean updated = agentService.updateAgentProfile(userId, profile);
+        if (!updated) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/skills")
+    public ResponseEntity<Boolean> updateSkills(HttpServletRequest request, @RequestBody Set<Skill> skills) {
+        Long userId = jwtUtil.extractUserIdFromRequest(request);
+        boolean updated = agentService.updateAgentSkills(userId, skills);
+        if (!updated) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/categories")
+    public ResponseEntity<Boolean> updateCategories(HttpServletRequest request, @RequestBody Set<Category> categories) {
+        Long userId = jwtUtil.extractUserIdFromRequest(request);
+        boolean updated = agentService.updateAgentCategories(userId, categories);
+        if (!updated) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/statistics")

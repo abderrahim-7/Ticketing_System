@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
@@ -11,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.Agent;
+import com.example.demo.Entity.Category;
+import com.example.demo.Entity.Skill;
 import com.example.demo.Entity.Status;
 import com.example.demo.Entity.Ticket;
 import com.example.demo.dto.TicketResponse;
@@ -42,6 +45,43 @@ public class AgentServiceImpl implements AgentService {
         response.setCategories(agent.getCategories().stream().map(category -> category.getName()).toList());
         response.setSkills(agent.getSkills().stream().map(skill -> skill.getName()).toList());
         return response;
+    }
+
+    @Override
+    public boolean updateAgentProfile(Long id, AgentProfileResponse profile) {
+        Agent agent = agentRepository.findById(id).orElse(null);
+        if (agent == null) {
+            return false;
+        }
+        agent.setUsername(profile.getUsername());
+        agent.setEmail(profile.getEmail());
+        agent.setPhoneNumber(profile.getPhoneNumber());
+        agent.setDepartement(profile.getDepartement());
+        agent.setJobTitle(profile.getJobTitle());
+        agentRepository.save(agent);
+        return true;
+    }
+
+    @Override
+    public boolean updateAgentSkills(Long id, Set<Skill> skills) {
+        Agent agent = agentRepository.findById(id).orElse(null);
+        if (agent == null) {
+            return false;
+        }
+        agent.setSkills(skills);
+        agentRepository.save(agent);
+        return true;
+    }
+
+    @Override
+    public boolean updateAgentCategories(Long id, Set<Category> categories) {
+        Agent agent = agentRepository.findById(id).orElse(null);
+        if (agent == null) {
+            return false;
+        }
+        agent.setCategories(categories);
+        agentRepository.save(agent);
+        return true;
     }
 
     public AgentStatisticsResponse getAgentStatistics(Long id) {
