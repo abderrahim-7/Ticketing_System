@@ -1,0 +1,57 @@
+package com.example.demo.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.Entity.Category;
+import com.example.demo.service.impl.CategoryServiceImpl;
+import org.springframework.web.bind.annotation.PutMapping;
+
+@RestController
+@RequestMapping("/admin/categories")
+public class CategoryController {
+
+    @Autowired
+    private CategoryServiceImpl categoryService;
+
+    @GetMapping("/")
+    public List<Category> getAllCategories(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        return categoryService.getAllCategories(page, limit);
+    }
+
+    @GetMapping("/{id}")
+    public Category getCategoryById(@PathVariable("id") Long id) {
+        return categoryService.getCategory(id);
+    }
+
+    @PostMapping("/")
+    public Category createCategory(@RequestBody Category category) {
+        Category createdCategory = categoryService.createCategory(category);
+        return createdCategory;
+    }
+
+    @PutMapping("/{id}")
+    public Category updateCategoryDescription(@PathVariable("id") Long id, @RequestBody String description) {
+        Category updatedCategory = categoryService.updateCategoryDescription(id, description);
+        return updatedCategory;
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteCategory(@PathVariable("id") Long id) {
+        boolean deleted = categoryService.deleteCategory(id);
+        if (deleted) {
+            return "Category with ID " + id + " has been deleted.";
+        } else {
+            return "Category with ID " + id + " not found.";
+        }
+    }
+}

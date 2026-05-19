@@ -86,7 +86,8 @@ public class AgentController {
 
     @GetMapping("/tickets")
     public ResponseEntity<List<TicketResponse>> getAssignedTickets(HttpServletRequest request,
-            @RequestParam("page") int page, @RequestParam("limit") int limit) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
         List<TicketResponse> response = agentService.getAssignedTickets(userId, page, limit);
         return ResponseEntity.ok(response);
