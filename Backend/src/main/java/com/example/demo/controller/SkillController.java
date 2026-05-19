@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.Entity.Category;
 import com.example.demo.Entity.Skill;
 import com.example.demo.service.impl.SkillServiceImpl;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,10 +33,9 @@ public class SkillController {
     }
 
     @PostMapping("/")
-    public String createSkill(@RequestBody Skill skill) {
+    public Skill createSkill(@RequestBody Skill skill) {
         Skill createdSkill = skillService.createSkill(skill);
-        return "Skill created with ID: " + createdSkill.getId();
-
+        return createdSkill;
     }
 
     @PostMapping("/delete/{id}")
