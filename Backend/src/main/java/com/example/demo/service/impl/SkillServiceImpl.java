@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
 import com.example.demo.Entity.Skill;
+import com.example.demo.dto.SkillResponse;
 import com.example.demo.repository.SkillRepository;
 import com.example.demo.service.SkillService;
 
@@ -15,18 +16,25 @@ public class SkillServiceImpl implements SkillService {
     SkillRepository skillRepository;
 
     @Override
-    public List<Skill> getAllSkills(int page, int limit) {
-        return skillRepository.findAll(PageRequest.of(page, limit)).getContent();
+    public List<SkillResponse> getAllSkills(int page, int limit) {
+        return skillRepository.findAll(PageRequest.of(page, limit)).getContent().stream()
+                .map(skill -> new SkillResponse(skill.getId(), skill.getName()))
+                .toList();
     }
 
     @Override
-    public Skill getSkillById(Long id) {
-        return skillRepository.findById(id).orElse(null);
+    public SkillResponse getSkillById(Long id) {
+        Skill skill = skillRepository.findById(id).orElse(null);
+        if (skill == null) {
+            return null;
+        }
+        return new SkillResponse(skill.getId(), skill.getName());
     }
 
     @Override
-    public Skill createSkill(Skill skill) {
-        return skillRepository.save(skill);
+    public SkillResponse createSkill(Skill skill) {
+        Skill savedSkill = skillRepository.save(skill);
+        return new SkillResponse(savedSkill.getId(), savedSkill.getName());
     }
 
     @Override

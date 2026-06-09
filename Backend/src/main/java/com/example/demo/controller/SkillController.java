@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Entity.Skill;
+import com.example.demo.dto.SkillResponse;
 import com.example.demo.service.impl.SkillServiceImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,20 +23,19 @@ public class SkillController {
     private SkillServiceImpl skillService;
 
     @GetMapping("/")
-    public List<Skill> getAllSkills(@RequestParam(defaultValue = "0") int page,
+    public List<SkillResponse> getAllSkills(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) {
         return skillService.getAllSkills(page, limit);
     }
 
     @GetMapping("/{id}")
-    public Skill getSkillById(@PathVariable("id") Long id) {
+    public SkillResponse getSkillById(@PathVariable("id") Long id) {
         return skillService.getSkillById(id);
     }
 
     @PostMapping("/")
-    public Skill createSkill(@RequestBody Skill skill) {
-        Skill createdSkill = skillService.createSkill(skill);
-        return createdSkill;
+    public SkillResponse createSkill(@RequestBody Skill skill) {
+        return skillService.createSkill(skill);
     }
 
     @PostMapping("/delete/{id}")
