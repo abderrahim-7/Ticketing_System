@@ -38,6 +38,10 @@ public class Ticket {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+
+    private LocalDateTime AssignedAt;
+
+
     private LocalDateTime resolvedDate;
 
     @ManyToOne
