@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.example.demo.Entity.Agent;
-import com.example.demo.Entity.Ticket;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
@@ -14,8 +13,6 @@ import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.User.UserProfileResponse;
 import com.example.demo.dto.User.UserStatisticsResponse;
-
-import io.micrometer.core.ipc.http.HttpSender.Response;
 
 public interface UserService {
     ResponseEntity<RegisterResponse> register(Agent user);
@@ -30,16 +27,16 @@ public interface UserService {
 
     ResponseEntity<LoginResponse> login(LoginRequest request);
 
-    ResponseEntity<String> changePassword(String oldPassword, String newPassword);
+    ResponseEntity<String> changePassword(Long userId, String oldPassword, String newPassword);
 
-    ResponseEntity<List<TicketResponse>> getTickets(String token);
+    ResponseEntity<List<TicketResponse>> getTickets(Long userId, int page, int limit);
 
-    ResponseEntity<TicketResponse> createTicket(String title, Long categoryId, String description);
+    ResponseEntity<TicketResponse> createTicket(Long userId, String title, Long categoryId, String description);
 
-    ResponseEntity<UserProfileResponse> getUserProfile();
+    ResponseEntity<UserProfileResponse> getUserProfile(Long userId);
 
-    ResponseEntity<String> updateUserProfile(UserProfileResponse request);
+    ResponseEntity<String> updateUserProfile(UserProfileResponse request, Long userId);
 
-    ResponseEntity<UserStatisticsResponse> getUserStatistics();
+    ResponseEntity<UserStatisticsResponse> getUserStatistics(Long userId);
 
 }

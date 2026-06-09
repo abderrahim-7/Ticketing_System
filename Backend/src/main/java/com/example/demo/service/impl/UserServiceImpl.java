@@ -1,25 +1,35 @@
 package com.example.demo.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.Entity.Agent;
+import com.example.demo.Entity.Category;
 import com.example.demo.Entity.Role;
+import com.example.demo.Entity.Status;
+import com.example.demo.Entity.Ticket;
 import com.example.demo.Entity.User;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.RegisterResponse;
 import com.example.demo.dto.ResetPasswordRequest;
+import com.example.demo.dto.TicketResponse;
+import com.example.demo.dto.User.UserProfileResponse;
+import com.example.demo.dto.User.UserStatisticsResponse;
 import com.example.demo.exception.EmailAlreadyExistsException;
 import com.example.demo.exception.EmailNotFound;
 import com.example.demo.exception.InvalidCredentialsException;
 import com.example.demo.repository.AgentRepository;
+import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.TicketRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.HashPassword;
 import com.example.demo.security.JWTUtil;
@@ -47,6 +57,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AgentRepository agentRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Transactional
     public ResponseEntity<RegisterResponse> register(Agent user) {
@@ -180,6 +196,10 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
+        if (user.getRole() == Role.AGENT && !((Agent) user).isActive()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
         if (!hashPassword.passwordEncoder().matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
@@ -192,5 +212,136 @@ public class UserServiceImpl implements UserService {
         response.setToken(token);
         return ResponseEntity.ok().body(response);
 
+    }
 
-}}
+    public ResponseEntity<List<TicketResponse>> getTickets(Long userId, int page, int limit) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<TicketResponse> tickets = ticketRepository.findByUserId(user.getId(), PageRequest.of(page, limit))
+                .getContent()
+                .stream().map(ticket -> {
+                    TicketResponse response = new TicketResponse();
+                    response.setTitle(ticket.getTitle());
+                    response.setDescription(ticket.getDescription());
+                    response.setCategory(ticket.getCategory().getName());
+                    response.setUser(ticket.getUser().getUsername());
+                    response.setAgent(ticket.getAgent() != null ? ticket.getAgent().getUsername() : null);
+                    response.setStatus(ticket.getStatus().toString());
+                    response.setId(ticket.getId());
+                    return response;
+                }).toList();
+
+        return ResponseEntity.ok(tickets);
+    };
+
+    public ResponseEntity<TicketResponse> createTicket(Long userId, String title, Long categoryId, String description) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Ticket ticket = new Ticket();
+        ticket.setUser(user);
+        ticket.setTitle(title);
+        ticket.setDescription(description);
+        ticket.setCategory(category);
+        ticket.setStatus(Status.PENDING);
+        ticketRepository.save(ticket);
+
+        return ResponseEntity.ok().body(new TicketResponse() {
+            {
+                setTitle(ticket.getTitle());
+                setDescription(ticket.getDescription());
+                setCategory(ticket.getCategory().getName());
+                setUser(ticket.getUser().getUsername());
+                setStatus(ticket.getStatus().toString());
+                setId(ticket.getId());
+            }
+        });
+    };
+
+    public ResponseEntity<UserProfileResponse> getUserProfile(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        UserProfileResponse response = new UserProfileResponse();
+        response.setEmail(user.getEmail());
+        response.setUsername(user.getUsername());
+        response.setPhoneNumber(user.getPhoneNumber());
+        response.setDepartement(user.getDepartement());
+        response.setJobTitle(user.getJobTitle());
+        response.setLastLogin(user.getLastLogin());
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<String> updateUserProfile(UserProfileResponse request, Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        user.setUsername(request.getUsername());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setDepartement(request.getDepartement());
+        user.setJobTitle(request.getJobTitle());
+        user.setEmail(request.getEmail());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Profile updated successfully");
+    }
+
+    public ResponseEntity<UserStatisticsResponse> getUserStatistics(Long userId) {
+        UserStatisticsResponse response = new UserStatisticsResponse();
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<Ticket> tickets = ticketRepository.findByUserId(userId, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+
+        long totalTicketsSubmitted = tickets.size();
+        long totalAcceptedTickets = tickets.stream().filter(ticket -> ticket.getStatus() != Status.REJECTED).count();
+        double acceptanceRate = totalAcceptedTickets * 100 / totalTicketsSubmitted;
+
+        response.setTotalTicketsSubmitted(totalTicketsSubmitted);
+        response.setTotalAcceptedTickets(totalAcceptedTickets);
+        response.setAcceptanceRate(acceptanceRate);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<String> changePassword(Long userId, String oldPassword, String newPassword) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        if (!user.getPassword().equals(hashPassword.passwordEncoder().encode(oldPassword))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid old password");
+        }
+
+        user.setPassword(hashPassword.passwordEncoder().encode(newPassword));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+}
