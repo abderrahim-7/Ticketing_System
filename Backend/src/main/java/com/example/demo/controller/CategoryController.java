@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Entity.Category;
+import com.example.demo.dto.CategoryResponse;
 import com.example.demo.service.impl.CategoryServiceImpl;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -23,25 +24,25 @@ public class CategoryController {
     private CategoryServiceImpl categoryService;
 
     @GetMapping("/")
-    public List<Category> getAllCategories(@RequestParam(defaultValue = "0") int page,
+    public List<CategoryResponse> getAllCategories(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) {
         return categoryService.getAllCategories(page, limit);
     }
 
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable("id") Long id) {
+    public CategoryResponse getCategoryById(@PathVariable("id") Long id) {
         return categoryService.getCategory(id);
     }
 
     @PostMapping("/")
-    public Category createCategory(@RequestBody Category category) {
-        Category createdCategory = categoryService.createCategory(category);
+    public CategoryResponse createCategory(@RequestBody Category category) {
+        CategoryResponse createdCategory = categoryService.createCategory(category);
         return createdCategory;
     }
 
     @PutMapping("/{id}")
-    public Category updateCategoryDescription(@PathVariable("id") Long id, @RequestBody String description) {
-        Category updatedCategory = categoryService.updateCategoryDescription(id, description);
+    public CategoryResponse updateCategoryDescription(@PathVariable("id") Long id, @RequestBody String description) {
+        CategoryResponse updatedCategory = categoryService.updateCategoryDescription(id, description);
         return updatedCategory;
     }
 

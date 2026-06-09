@@ -1,11 +1,13 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
 import com.example.demo.Entity.Category;
+import com.example.demo.dto.CategoryResponse;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.service.CategoryService;
 
@@ -15,26 +17,31 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getAllCategories(int page, int limit) {
-        return categoryRepository.findAll(PageRequest.of(page, limit)).getContent();
+    public List<CategoryResponse> getAllCategories(int page, int limit) {
+        return categoryRepository.findAll(PageRequest.of(page, limit)).getContent().stream()
+                .map(category -> new CategoryResponse(category.getId(), category.getName(), category.getDescription()))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Category getCategory(Long id) {
-        return categoryRepository.findById(id).orElse(null);
+    public CategoryResponse getCategory(Long id) {
+        Category category = categoryRepository.findById(id).orElse(null);
+        return new CategoryResponse(category.getId(), category.getName(), category.getDescription());
     }
 
     @Override
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    public CategoryResponse createCategory(Category category) {
+        Category newCategory = categoryRepository.save(category);
+        return new CategoryResponse(newCategory.getId(), newCategory.getName(), newCategory.getDescription());
     }
 
     @Override
-    public Category updateCategoryDescription(Long id, String description) {
+    public CategoryResponse updateCategoryDescription(Long id, String description) {
         Category category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
             category.setDescription(description);
-            return categoryRepository.save(category);
+            Category newCategory = categoryRepository.save(category);
+            return new CategoryResponse(newCategory.getId(), newCategory.getName(), newCategory.getDescription());
         }
         return null;
     }
