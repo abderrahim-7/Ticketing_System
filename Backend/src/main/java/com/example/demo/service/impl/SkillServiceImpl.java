@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.Skill;
 import com.example.demo.dto.SkillResponse;
 import com.example.demo.repository.SkillRepository;
 import com.example.demo.service.SkillService;
 
+
+@Service
 public class SkillServiceImpl implements SkillService {
 
     @Autowired

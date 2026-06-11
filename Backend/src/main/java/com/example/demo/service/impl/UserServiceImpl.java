@@ -64,50 +64,72 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Transactional
+
+
+    
+
+   @Transactional
     public ResponseEntity<RegisterResponse> register(Agent user) {
 
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new EmailAlreadyExistsException("Email already exists");
-        }
-
-        Role role = user.getRole();
-
-        Agent newUser = new Agent();
-
-        // User newUser= role==Role.USER ? new User() : new Agent();
-
-        newUser.setUsername(user.getUsername());
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(hashPassword.passwordEncoder().encode(user.getPassword()));
-        newUser.setEnabled(false);
-        newUser.setRole((Role) user.getRole());
-
-        if (role == Role.AGENT) {
-            newUser.setActive(false);
-            newUser.setRating(3.0);
-            newUser.setCategories(((Agent) user).getCategories());
-            newUser.setSkills(((Agent) user).getSkills());
-
-        }
-
-        User savedUser = role == Role.USER ? userRepository.save(newUser) : agentRepository.save(((Agent) newUser));
-
-        String token = UUID.randomUUID().toString();
-
-        verificationService.saveToken(token, savedUser.getEmail());
-
-        emailService.sendVerificationEmail(savedUser.getEmail(), token);
 
         RegisterResponse response = new RegisterResponse();
-        response.setMessage("User registered successfully");
-        response.setEmail(savedUser.getEmail());
-        response.setId(savedUser.getId());
-        response.setSuccess(true);
 
-        return ResponseEntity.ok(response);
-
+    if (userRepository.existsByEmail(user.getEmail())) {
+        throw new EmailAlreadyExistsException("Email already exists");
     }
+
+    Role role = user.getRole();
+
+    User newUser;
+
+    if (role == Role.AGENT) {
+
+        Agent agent = new Agent();
+
+        agent.setActive(false);
+        agent.setRating(3.0);
+        agent.setCategories(user.getCategories());
+        agent.setSkills(user.getSkills());
+
+        newUser = agent;
+
+    } else {
+
+        newUser = new User();
+    }
+
+    newUser.setUsername(user.getUsername());
+    newUser.setEmail(user.getEmail());
+    newUser.setPassword(hashPassword.passwordEncoder().encode(user.getPassword()));
+    newUser.setEnabled(false);
+    newUser.setRole(role);
+
+    User savedUser;
+
+    if (role == Role.AGENT) {
+        savedUser = agentRepository.save((Agent) newUser);
+        response.setMessage("Agent registered successfully");
+    } else {
+        savedUser = userRepository.save(newUser);
+        response.setMessage("User registered successfully");
+    }
+
+    String token = UUID.randomUUID().toString();
+
+    verificationService.saveToken(token, savedUser.getEmail());
+
+    emailService.sendVerificationEmail(savedUser.getEmail(), token);
+
+    
+
+    
+    response.setEmail(savedUser.getEmail());
+    response.setId(savedUser.getId());
+    response.setSuccess(true);
+
+    return ResponseEntity.ok(response);
+}
+
 
     public ResponseEntity<String> EnableUser(String token) {
 

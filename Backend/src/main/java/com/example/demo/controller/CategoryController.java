@@ -40,13 +40,8 @@ public class CategoryController {
         return createdCategory;
     }
 
-    @PutMapping("/{id}")
-    public CategoryResponse updateCategoryDescription(@PathVariable("id") Long id, @RequestBody String description) {
-        CategoryResponse updatedCategory = categoryService.updateCategoryDescription(id, description);
-        return updatedCategory;
-    }
-
-    @PostMapping("/delete/{id}")
+   
+    @PostMapping("/{id}")
     public String deleteCategory(@PathVariable("id") Long id) {
         boolean deleted = categoryService.deleteCategory(id);
         if (deleted) {
