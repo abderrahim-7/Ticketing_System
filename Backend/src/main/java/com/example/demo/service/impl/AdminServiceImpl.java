@@ -14,6 +14,7 @@ import com.example.demo.dto.Agent.AgentProfileResponse;
 import com.example.demo.dto.User.UserProfileResponse;
 import com.example.demo.Entity.Category;
 import com.example.demo.Entity.User;
+import com.example.demo.Entity.Role;
 import com.example.demo.repository.AgentRepository;
 import com.example.demo.repository.TicketRepository;
 import com.example.demo.repository.CategoryRepository;
@@ -129,7 +130,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<List<UserProfileResponse>> getAlUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.USER)
+                .toList();
         List<UserProfileResponse> resp = users.stream().map(u -> {
             UserProfileResponse r = new UserProfileResponse();
             r.setUsername(u.getUsername());

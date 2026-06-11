@@ -5,12 +5,16 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.Entity.Category;
 import com.example.demo.dto.CategoryResponse;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.service.CategoryService;
 
+
+
+@Service
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
