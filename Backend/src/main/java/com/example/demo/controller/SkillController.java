@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,13 +41,13 @@ public class SkillController {
         return skillService.createSkill(skill);
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteSkill(@PathVariable("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteSkill(@PathVariable("id") Long id) {
         boolean deleted = skillService.deleteSkill(id);
         if (deleted) {
-            return "Skill with ID " + id + " has been deleted.";
+            return ResponseEntity.ok(Map.of("message", "Skill with ID " + id + " has been deleted."));
         } else {
-            return "Skill with ID " + id + " not found.";
+            return ResponseEntity.notFound().build();
         }
     }
 }

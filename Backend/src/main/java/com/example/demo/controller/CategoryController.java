@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,13 +44,13 @@ public class CategoryController {
     }
 
    
-    @PostMapping("/{id}")
-    public String deleteCategory(@PathVariable("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable("id") Long id) {
         boolean deleted = categoryService.deleteCategory(id);
         if (deleted) {
-            return "Category with ID " + id + " has been deleted.";
+            return ResponseEntity.ok(Map.of("message", "Category with ID " + id + " has been deleted."));
         } else {
-            return "Category with ID " + id + " not found.";
+            return ResponseEntity.notFound().build();
         }
     }
 }

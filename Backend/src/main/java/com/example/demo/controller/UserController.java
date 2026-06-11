@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Entity.Agent;
 import com.example.demo.Entity.User;
+import com.example.demo.dto.CreateTicketRequest;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
@@ -78,10 +79,9 @@ public class UserController {
     }
 
     @PostMapping("/user/tickets")
-    public ResponseEntity<TicketResponse> createTicket(HttpServletRequest request, @RequestParam String title,
-            @RequestParam Long categoryId, @RequestParam String description) {
+    public ResponseEntity<TicketResponse> createTicket(HttpServletRequest request, @RequestBody CreateTicketRequest createTicketRequest) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
-        return userService.createTicket(userId, title, categoryId, description);
+        return userService.createTicket(userId, createTicketRequest.getTitle(), createTicketRequest.getCategoryId(), createTicketRequest.getDescription());
     }
 
     @GetMapping("/user/profile")
