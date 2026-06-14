@@ -19,6 +19,7 @@ import com.example.demo.Entity.Ticket;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.Agent.AgentProfileResponse;
 import com.example.demo.dto.Agent.AgentStatisticsResponse;
+import com.example.demo.dto.Agent.AgentUpdateProfileRequest;
 import com.example.demo.repository.AgentRepository;
 import com.example.demo.repository.TicketRepository;
 import com.example.demo.service.AgentService;
@@ -48,16 +49,19 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public boolean updateAgentProfile(Long id, AgentProfileResponse profile) {
+    public boolean updateAgentProfile(Long id, AgentUpdateProfileRequest profile) {
         Agent agent = agentRepository.findById(id).orElse(null);
         if (agent == null) {
             return false;
         }
-        agent.setUsername(profile.getUsername());
-        agent.setEmail(profile.getEmail());
-        agent.setPhoneNumber(profile.getPhoneNumber());
-        agent.setDepartement(profile.getDepartement());
-        agent.setJobTitle(profile.getJobTitle());
+        if (profile.getUsername() != null)
+            agent.setUsername(profile.getUsername());
+        if (profile.getPhoneNumber() != null)
+            agent.setPhoneNumber(profile.getPhoneNumber());
+        if (profile.getDepartement() != null)
+            agent.setDepartement(profile.getDepartement());
+        if (profile.getJobTitle() != null)
+            agent.setJobTitle(profile.getJobTitle());
         agentRepository.save(agent);
         return true;
     }

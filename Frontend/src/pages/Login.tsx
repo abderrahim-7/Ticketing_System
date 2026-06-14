@@ -1,14 +1,59 @@
 import { useState } from "react";
 import googleLogo from "../assets/googleLogo.svg";
 import AuthBackground from "../assets/AuthBackground.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../api/auth";
+import { useAuth } from "../contexts/AuthContext";
+import { jwtDecode } from "jwt-decode";
+import Toast from "../components/ui/Toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"error" | "success">("error");
+
+  const navigate = useNavigate();
+  const { setUserId, setRole } = useAuth();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!email || !password) {
+        setMessage("Please fill in all fields");
+        setMessageType("error");
+        return;
+      }
+
+      const response = await login(email, password);
+      console.log("Login successful:", response.data);
+      localStorage.setItem("token", response.data.token);
+
+      const decoded: any = jwtDecode(response.data.token);
+
+      setUserId(decoded.userId);
+      setRole(decoded.role);
+
+      navigate("/");
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      setMessage(error.response?.data?.message);
+      setMessageType("error");
+    }
+  };
+
   return (
     <div className="flex w-screen h-screen">
+      {message !== "" && (
+        <Toast
+          type={messageType}
+          message={message}
+          onClose={() => {
+            setMessage("");
+          }}
+        />
+      )}
       <div className="w-1/2 h-screen bg-gray-500 overflow-hidden">
         <img
           src={AuthBackground}
@@ -33,7 +78,7 @@ const Login = () => {
         >
           Sign in to your account
         </h1>{" "}
-        <form onSubmit={() => {}}>
+        <form onSubmit={handleLogin}>
           <input
             type="email"
             value={email}
@@ -82,8 +127,24 @@ const Login = () => {
   "
           />
 
+          <div className="w-2/3 flex justify-start mb-4">
+            <Link
+              to="/forgot-password"
+              className="
+      text-sm
+      text-gray-500
+      hover:text-gray-700
+      transition-colors
+      duration-200
+      cursor-pointer
+    "
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
           <button
-            type="button"
+            type="submit"
             className={`flex items-center justify-center gap-3 py-3 rounded-lg
                         bg-blue-400 hover:bg-blue-500
                         w-2/3`}

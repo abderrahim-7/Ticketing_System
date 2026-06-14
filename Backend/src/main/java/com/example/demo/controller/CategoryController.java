@@ -26,7 +26,7 @@ public class CategoryController {
     @Autowired
     private CategoryServiceImpl categoryService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<CategoryResponse> getAllCategories(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) {
         return categoryService.getAllCategories(page, limit);
@@ -37,13 +37,12 @@ public class CategoryController {
         return categoryService.getCategory(id);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public CategoryResponse createCategory(@RequestBody Category category) {
         CategoryResponse createdCategory = categoryService.createCategory(category);
         return createdCategory;
     }
 
-   
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable("id") Long id) {
         boolean deleted = categoryService.deleteCategory(id);

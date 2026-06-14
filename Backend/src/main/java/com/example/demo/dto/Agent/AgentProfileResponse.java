@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class AgentProfileResponse {
+    private Long id;
     private String username;
     private String email;
     private String phoneNumber;
@@ -15,5 +16,7 @@ public class AgentProfileResponse {
     private LocalDateTime lastLogin;
     private List<String> categories;
     private List<String> skills;
+    private boolean isActive;
+    private boolean isEnabled;
 
 }

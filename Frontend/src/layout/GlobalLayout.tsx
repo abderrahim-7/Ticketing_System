@@ -1,11 +1,14 @@
 import SideBar from "../components/layout/SideBar";
 import TopBar from "../components/layout/TopBar";
+import { useAuth } from "../contexts/AuthContext";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const GlobalLayout = ({ children }: Props) => {
+  const { role } = useAuth();
+
   return (
     <div className="min-h-screen flex flex-col z-0">
       {/* Top bar */}
@@ -13,7 +16,7 @@ const GlobalLayout = ({ children }: Props) => {
 
       {/* Main area */}
       <div className="flex flex-1">
-        <SideBar role={"user"} />
+        <SideBar role={role} />
 
         {/* Page content */}
         <main className="flex-1 ml-20 p-4 bg-gray-50 min-h-[calc(100vh-4rem)]">

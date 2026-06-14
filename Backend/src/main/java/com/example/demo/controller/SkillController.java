@@ -25,7 +25,7 @@ public class SkillController {
     @Autowired
     private SkillServiceImpl skillService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<SkillResponse> getAllSkills(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) {
         return skillService.getAllSkills(page, limit);
@@ -36,7 +36,7 @@ public class SkillController {
         return skillService.getSkillById(id);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public SkillResponse createSkill(@RequestBody Skill skill) {
         return skillService.createSkill(skill);
     }

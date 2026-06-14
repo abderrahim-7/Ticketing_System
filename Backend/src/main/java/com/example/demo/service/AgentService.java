@@ -8,9 +8,10 @@ import com.example.demo.Entity.Skill;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.Agent.AgentProfileResponse;
 import com.example.demo.dto.Agent.AgentStatisticsResponse;
+import com.example.demo.dto.Agent.AgentUpdateProfileRequest;
 
 public interface AgentService {
-    public boolean updateAgentProfile(Long id, AgentProfileResponse profile);
+    public boolean updateAgentProfile(Long id, AgentUpdateProfileRequest profile);
 
     public boolean updateAgentSkills(Long id, Set<Skill> skills);
 

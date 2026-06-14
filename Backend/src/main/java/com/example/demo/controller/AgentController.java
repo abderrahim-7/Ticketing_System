@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import com.example.demo.Entity.Skill;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.Agent.AgentProfileResponse;
 import com.example.demo.dto.Agent.AgentStatisticsResponse;
+import com.example.demo.dto.Agent.AgentUpdateProfileRequest;
 import com.example.demo.security.JWTUtil;
 import com.example.demo.service.impl.AgentServiceImpl;
 
@@ -43,9 +45,9 @@ public class AgentController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/profile")
+    @PatchMapping("/profile")
     public ResponseEntity<Boolean> updateProfile(HttpServletRequest request,
-            @RequestBody AgentProfileResponse profile) {
+            @RequestBody AgentUpdateProfileRequest profile) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
         boolean updated = agentService.updateAgentProfile(userId, profile);
         if (!updated) {
@@ -54,7 +56,7 @@ public class AgentController {
         return ResponseEntity.ok(updated);
     }
 
-    @PutMapping("/skills")
+    @PatchMapping("/skills")
     public ResponseEntity<Boolean> updateSkills(HttpServletRequest request, @RequestBody Set<Skill> skills) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
         boolean updated = agentService.updateAgentSkills(userId, skills);
@@ -64,7 +66,7 @@ public class AgentController {
         return ResponseEntity.ok(updated);
     }
 
-    @PutMapping("/categories")
+    @PatchMapping("/categories")
     public ResponseEntity<Boolean> updateCategories(HttpServletRequest request, @RequestBody Set<Category> categories) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
         boolean updated = agentService.updateAgentCategories(userId, categories);

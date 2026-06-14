@@ -13,6 +13,7 @@ import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.User.UserProfileResponse;
 import com.example.demo.dto.User.UserStatisticsResponse;
+import com.example.demo.dto.User.UserUpdateProfileRequest;
 
 public interface UserService {
     ResponseEntity<RegisterResponse> register(Agent user);
@@ -35,7 +36,7 @@ public interface UserService {
 
     ResponseEntity<UserProfileResponse> getUserProfile(Long userId);
 
-    ResponseEntity<String> updateUserProfile(UserProfileResponse request, Long userId);
+    ResponseEntity<String> updateUserProfile(UserUpdateProfileRequest request, Long userId);
 
     ResponseEntity<UserStatisticsResponse> getUserStatistics(Long userId);
 

@@ -8,39 +8,28 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Entity
 @Data
-public class Agent extends User{
-
+@Entity
+@EqualsAndHashCode(exclude = { "categories", "skills" })
+@ToString(exclude = { "categories", "skills" })
+public class Agent extends User {
 
     private boolean isActive;
 
     private double rating;
 
     @ManyToMany
-    @JoinTable(
-        name = "agent_category" ,
-        joinColumns = @JoinColumn(name = "agent_id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+    @JoinTable(name = "agent_category", joinColumns = @JoinColumn(name = "agent_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories;
 
-
     @ManyToMany
-     @JoinTable(
-        name = "agent_skill" ,
-        joinColumns = @JoinColumn(name = "agent_id"),
-        inverseJoinColumns = @JoinColumn(name = "skill_id")
-    )
+    @JoinTable(name = "agent_skill", joinColumns = @JoinColumn(name = "agent_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> skills;
-
 
     @OneToMany(mappedBy = "agent")
     private Set<Ticket> assignedTickets;
-
-
-
-    
 
 }

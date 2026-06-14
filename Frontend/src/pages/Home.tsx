@@ -1,18 +1,38 @@
 import GlobalLayout from "../layout/GlobalLayout";
-import { user } from "../1data/user";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const { role } = useAuth();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        if (role === "USER" || role === "ADMIN") {
+          const response = await getUserProfile();
+          setUsername(response.data.username);
+        }
+        if (role === "AGENT") {
+          const response = await getAgentProfile();
+          setUsername(response.data.username);
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
   return (
     <GlobalLayout>
       <div className="p-10 flex flex-col items-center">
         <h1 className="text-4xl md:text-5xl font-extrabold text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-12">
-          Welcome back, {user.username}
+          Welcome back, {username}
         </h1>
 
         <div className="flex flex-col items-center gap-6">
           <div className="flex flex-wrap justify-center gap-6">
-            {user.role === "user" && (
+            {role === "USER" && (
               <>
                 <HomeCard
                   color="purple"
@@ -37,7 +57,7 @@ const Home = () => {
                 />
               </>
             )}
-            {user.role === "agent" && (
+            {role === "AGENT" && (
               <>
                 <HomeCard
                   color="green"
@@ -62,7 +82,7 @@ const Home = () => {
                 />
               </>
             )}
-            {user.role === "admin" && (
+            {role === "ADMIN" && (
               <>
                 <HomeCard
                   color="purple"
@@ -103,6 +123,9 @@ interface HomeCardProps {
 }
 
 import { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { getUserProfile } from "../api/user";
+import { getAgentProfile } from "../api/agent";
 
 const HomeCard = ({ color, title, description, to, delay }: HomeCardProps) => {
   const colors = {

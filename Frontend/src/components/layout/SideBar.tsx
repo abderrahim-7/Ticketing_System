@@ -11,10 +11,11 @@ import {
   UserPlus,
   Users,
   Activity,
+  Layers,
 } from "lucide-react";
 
 interface Props {
-  role: "user" | "agent" | "admin";
+  role: "USER" | "AGENT" | "ADMIN" | null;
 }
 
 const SideBar = ({ role }: Props) => {
@@ -31,8 +32,9 @@ const SideBar = ({ role }: Props) => {
 
   const admins = [
     { icon: UserPlus, label: "Assign", path: "/admin/assign" },
-    { icon: Users, label: "Agents", path: "/admin/manage-agents" },
+    { icon: Users, label: "Accounts", path: "/admin/manage-agents" },
     { icon: Activity, label: "Monitor", path: "/admin/monitor" },
+    { icon: Layers, label: "Categories", path: "/admin/categories" },
   ];
 
   const location = useLocation();
@@ -47,7 +49,7 @@ const SideBar = ({ role }: Props) => {
           active={location.pathname === "/"}
           to={"/"}
         />
-        {role === "user" &&
+        {role === "USER" &&
           users.map((item, index) => (
             <SidebarButton
               key={index}
@@ -57,7 +59,7 @@ const SideBar = ({ role }: Props) => {
               active={location.pathname === item.path}
             />
           ))}
-        {role === "agent" &&
+        {role === "AGENT" &&
           agents.map((item, index) => (
             <SidebarButton
               key={index}
@@ -67,7 +69,7 @@ const SideBar = ({ role }: Props) => {
               to={item.path}
             />
           ))}
-        {role === "admin" &&
+        {role === "ADMIN" &&
           admins.map((item, index) => (
             <SidebarButton
               key={index}
@@ -77,12 +79,14 @@ const SideBar = ({ role }: Props) => {
               to={item.path}
             />
           ))}
-        <SidebarButton
-          Icon={UserIcon}
-          label="Profile"
-          active={location.pathname === "/profile"}
-          to={"/profile"}
-        />
+        {role !== "ADMIN" && (
+          <SidebarButton
+            Icon={UserIcon}
+            label="Profile"
+            active={location.pathname === "/profile"}
+            to={"/profile"}
+          />
+        )}
       </div>
       <div className="flex flex-col gap-4">
         <SidebarButton
@@ -114,7 +118,12 @@ const SidebarButton = ({ Icon, label, active, to }: ButtonProps) => {
 
   return (
     <div
-      onClick={() => navigate(to)}
+      onClick={() => {
+        navigate(to);
+        if (label === "Logout") {
+          localStorage.removeItem("token");
+        }
+      }}
       className={`
         relative
         group flex flex-col items-center justify-center p-2 rounded-xl cursor-pointer

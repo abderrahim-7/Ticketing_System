@@ -24,6 +24,7 @@ import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.User.UserProfileResponse;
 import com.example.demo.dto.User.UserStatisticsResponse;
+import com.example.demo.dto.User.UserUpdateProfileRequest;
 import com.example.demo.exception.EmailAlreadyExistsException;
 import com.example.demo.exception.EmailNotFound;
 import com.example.demo.exception.InvalidCredentialsException;
@@ -64,72 +65,63 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-
-
-    
-
-   @Transactional
+    @Transactional
     public ResponseEntity<RegisterResponse> register(Agent user) {
-
 
         RegisterResponse response = new RegisterResponse();
 
-    if (userRepository.existsByEmail(user.getEmail())) {
-        throw new EmailAlreadyExistsException("Email already exists");
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        Role role = user.getRole();
+
+        User newUser;
+
+        if (role == Role.AGENT) {
+
+            Agent agent = new Agent();
+
+            agent.setActive(false);
+            agent.setRating(3.0);
+            agent.setCategories(user.getCategories());
+            agent.setSkills(user.getSkills());
+
+            newUser = agent;
+
+        } else {
+
+            newUser = new User();
+        }
+
+        newUser.setUsername(user.getUsername());
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(hashPassword.passwordEncoder().encode(user.getPassword()));
+        newUser.setEnabled(false);
+        newUser.setRole(role);
+
+        User savedUser;
+
+        if (role == Role.AGENT) {
+            savedUser = agentRepository.save((Agent) newUser);
+            response.setMessage("Agent registered successfully");
+        } else {
+            savedUser = userRepository.save(newUser);
+            response.setMessage("User registered successfully");
+        }
+
+        String token = UUID.randomUUID().toString();
+
+        verificationService.saveToken(token, savedUser.getEmail());
+
+        emailService.sendVerificationEmail(savedUser.getEmail(), token);
+
+        response.setEmail(savedUser.getEmail());
+        response.setId(savedUser.getId());
+        response.setSuccess(true);
+
+        return ResponseEntity.ok(response);
     }
-
-    Role role = user.getRole();
-
-    User newUser;
-
-    if (role == Role.AGENT) {
-
-        Agent agent = new Agent();
-
-        agent.setActive(false);
-        agent.setRating(3.0);
-        agent.setCategories(user.getCategories());
-        agent.setSkills(user.getSkills());
-
-        newUser = agent;
-
-    } else {
-
-        newUser = new User();
-    }
-
-    newUser.setUsername(user.getUsername());
-    newUser.setEmail(user.getEmail());
-    newUser.setPassword(hashPassword.passwordEncoder().encode(user.getPassword()));
-    newUser.setEnabled(false);
-    newUser.setRole(role);
-
-    User savedUser;
-
-    if (role == Role.AGENT) {
-        savedUser = agentRepository.save((Agent) newUser);
-        response.setMessage("Agent registered successfully");
-    } else {
-        savedUser = userRepository.save(newUser);
-        response.setMessage("User registered successfully");
-    }
-
-    String token = UUID.randomUUID().toString();
-
-    verificationService.saveToken(token, savedUser.getEmail());
-
-    emailService.sendVerificationEmail(savedUser.getEmail(), token);
-
-    
-
-    
-    response.setEmail(savedUser.getEmail());
-    response.setId(savedUser.getId());
-    response.setSuccess(true);
-
-    return ResponseEntity.ok(response);
-}
-
 
     public ResponseEntity<String> EnableUser(String token) {
 
@@ -215,22 +207,26 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(request.getEmail());
 
         if (user == null || !user.isEnabled()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new LoginResponse(null, null, null, "Invalid credentials"));
         }
 
         if (user.getRole() == Role.AGENT && !((Agent) user).isActive()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new LoginResponse(null, null, null,
+                            "Your account is not active, please wait for admin approval"));
         }
 
         if (!hashPassword.passwordEncoder().matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new LoginResponse(null, null, null, "Invalid credentials"));
         }
 
         LoginResponse response = new LoginResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
-
-        String token = jwtUtil.generateToken(user.getEmail(), user.getId());
+        response.setMessage("Login successful");
+        String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getRole());
         response.setToken(token);
         return ResponseEntity.ok().body(response);
 
@@ -310,18 +306,21 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<String> updateUserProfile(UserProfileResponse request, Long userId) {
+    public ResponseEntity<String> updateUserProfile(UserUpdateProfileRequest request, Long userId) {
         User user = userRepository.findById(userId).orElse(null);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        user.setUsername(request.getUsername());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setDepartement(request.getDepartement());
-        user.setJobTitle(request.getJobTitle());
-        user.setEmail(request.getEmail());
+        if (request.getUsername() != null)
+            user.setUsername(request.getUsername());
+        if (request.getPhoneNumber() != null)
+            user.setPhoneNumber(request.getPhoneNumber());
+        if (request.getDepartement() != null)
+            user.setDepartement(request.getDepartement());
+        if (request.getJobTitle() != null)
+            user.setJobTitle(request.getJobTitle());
 
         userRepository.save(user);
 
@@ -338,7 +337,9 @@ public class UserServiceImpl implements UserService {
         List<Ticket> tickets = ticketRepository.findByUserId(userId, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
 
         long totalTicketsSubmitted = tickets.size();
-        long totalAcceptedTickets = tickets.stream().filter(ticket -> ticket.getStatus() != Status.REJECTED).count();
+        long totalAcceptedTickets = tickets.stream()
+                .filter(ticket -> ticket.getStatus() != Status.REJECTED && ticket.getStatus() != Status.PENDING)
+                .count();
         double acceptanceRate = totalAcceptedTickets * 100 / totalTicketsSubmitted;
 
         response.setTotalTicketsSubmitted(totalTicketsSubmitted);
@@ -349,18 +350,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<String> changePassword(Long userId, String oldPassword, String newPassword) {
+    public ResponseEntity<String> changePassword(
+            Long userId,
+            String oldPassword,
+            String newPassword) {
+
         User user = userRepository.findById(userId).orElse(null);
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
         }
 
-        if (!user.getPassword().equals(hashPassword.passwordEncoder().encode(oldPassword))) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid old password");
+        if (!hashPassword.passwordEncoder().matches(
+                oldPassword,
+                user.getPassword())) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid old password");
         }
 
-        user.setPassword(hashPassword.passwordEncoder().encode(newPassword));
+        user.setPassword(
+                hashPassword.passwordEncoder().encode(newPassword));
+
         userRepository.save(user);
 
         return ResponseEntity.ok("Password changed successfully");

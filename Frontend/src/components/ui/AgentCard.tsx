@@ -1,30 +1,30 @@
 import { CheckCircle } from "lucide-react";
 
 interface Agent {
-  id: string;
-  name: string;
+  id: number;
+  username: string;
   categories: string[];
   skills: string[];
   currentLoad: number;
-  maxLoad: number;
 }
 
 interface Props {
   agent: Agent;
   onAssign: () => void;
+  maxLoad?: number;
 }
 
-const AgentCard = ({ agent, onAssign }: Props) => {
-  const loadPercent = (agent.currentLoad / agent.maxLoad) * 100;
+const AgentCard = ({ agent, onAssign, maxLoad = 6 }: Props) => {
+  const loadPercent = (agent.currentLoad / maxLoad) * 100;
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 flex flex-col gap-4 hover:shadow-xl transition">
       {/* HEADER */}
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-bold text-gray-800">{agent.name}</h2>
+        <h2 className="text-lg font-bold text-gray-800">{agent.username}</h2>
 
         <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
-          {agent.currentLoad}/{agent.maxLoad}
+          {agent.currentLoad}/{maxLoad}
         </span>
       </div>
 
@@ -69,10 +69,10 @@ const AgentCard = ({ agent, onAssign }: Props) => {
       {/* ASSIGN BUTTON */}
       <button
         onClick={onAssign}
-        disabled={agent.currentLoad >= agent.maxLoad}
+        disabled={agent.currentLoad >= maxLoad}
         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-white font-semibold transition
           ${
-            agent.currentLoad >= agent.maxLoad
+            agent.currentLoad >= maxLoad
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-green-500 hover:bg-green-600"
           }`}

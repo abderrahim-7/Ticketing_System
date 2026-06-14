@@ -12,9 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
+@EqualsAndHashCode(exclude = { "agents", "tickets" })
+@ToString(exclude = { "agents", "tickets" })
 public class Category {
 
     @Id

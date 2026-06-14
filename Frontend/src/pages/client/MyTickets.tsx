@@ -1,67 +1,48 @@
 import { useEffect, useState } from "react";
 import GlobalLayout from "../../layout/GlobalLayout";
 import Ticket from "../../components/ui/Ticket";
+import { getUserTickets } from "../../api/user";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface TicketData {
-  name: string;
+  id: number;
+  title: string;
   category: string;
   description: string;
   agent: string;
   user: string;
-  status: "pending" | "in progress" | "rejected" | "done";
-  role: "user" | "agent" | "admin";
+  status: "PENDING" | "IN_PROGRESS" | "REJECTED" | "DONE";
+  role: "USER" | "AGENT" | "ADMIN";
 }
 
 const MyTickets = () => {
-  const tickets: TicketData[] = [
-    {
-      name: "Electrical Outage",
-      category: "Technical Issue",
-      description:
-        "The electricity isn't working in the IT departement in the second flore, please fix it as soon as possible.",
-      agent: "agent 009",
-      user: "Abderrahim",
-      status: "in progress",
-      role: "user",
-    },
-    {
-      name: "Software Installation",
-      category: "Technical Issue",
-      description:
-        "I need the latest version of Photoshop installed on my workstation for a project deadline.",
-      agent: "",
-      user: "Abderrahim",
-      status: "pending",
-      role: "user",
-    },
-    {
-      name: "Password Reset",
-      category: "Account Problem",
-      description:
-        "I forgot my password and can't access my account. Please reset it for me.",
-      agent: "agent 007",
-      user: "Abderrahim",
-      status: "done",
-      role: "user",
-    },
-    {
-      name: "Network Issue",
-      category: "Technical Issue",
-      description:
-        "I'm having trouble connecting to the company network. Can you help me resolve this?",
-      agent: "agent 008",
-      user: "Abderrahim",
-      status: "rejected",
-      role: "user",
-    },
-  ];
+  const [tickets, setTickets] = useState<TicketData[]>([]);
+
+  const { role } = useAuth();
+
+  useEffect(() => {
+    const fetchUserTickets = async () => {
+      try {
+        const res = await getUserTickets();
+        setTickets(
+          res.data.map((ticket: TicketData) => ({
+            ...ticket,
+            role,
+          })),
+        );
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+      }
+    };
+    fetchUserTickets();
+  }, []);
 
   const currentTickets = tickets.filter(
-    (t) => t.status === "pending" || t.status === "in progress",
+    (t) => t.status === "PENDING" || t.status === "IN_PROGRESS",
   );
 
   const historyTickets = tickets.filter(
-    (t) => t.status === "done" || t.status === "rejected",
+    (t) => t.status === "DONE" || t.status === "REJECTED",
   );
 
   const [mounted, setMounted] = useState(false);

@@ -1,9 +1,12 @@
 package com.example.demo.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.example.demo.Entity.Category;
 import com.example.demo.Entity.Ticket;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
@@ -11,5 +14,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Page<Ticket> findByAgentId(Long agentId, Pageable pageable);
 
     Page<Ticket> findByUserId(Long userId, Pageable pageable);
+
+    List<Ticket> findByUserId(Long userId);
+
+    List<Ticket> findByAgentId(Long userId);
+
+    int countByCategory(Category c);
 
 }

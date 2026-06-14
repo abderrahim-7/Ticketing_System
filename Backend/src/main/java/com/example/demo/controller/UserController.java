@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Entity.Agent;
 import com.example.demo.Entity.User;
+import com.example.demo.dto.ChangePasswordRequest;
 import com.example.demo.dto.CreateTicketRequest;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
@@ -13,6 +14,7 @@ import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.TicketResponse;
 import com.example.demo.dto.User.UserProfileResponse;
 import com.example.demo.dto.User.UserStatisticsResponse;
+import com.example.demo.dto.User.UserUpdateProfileRequest;
 import com.example.demo.security.JWTUtil;
 import com.example.demo.service.UserService;
 
@@ -23,6 +25,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,16 +75,19 @@ public class UserController {
     }
 
     @GetMapping("/user/tickets")
-    public ResponseEntity<List<TicketResponse>> getUserTickets(HttpServletRequest request, @RequestParam int page,
-            @RequestParam int limit) {
+    public ResponseEntity<List<TicketResponse>> getUserTickets(HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
         return userService.getTickets(userId, page, limit);
     }
 
     @PostMapping("/user/tickets")
-    public ResponseEntity<TicketResponse> createTicket(HttpServletRequest request, @RequestBody CreateTicketRequest createTicketRequest) {
+    public ResponseEntity<TicketResponse> createTicket(HttpServletRequest request,
+            @RequestBody CreateTicketRequest createTicketRequest) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
-        return userService.createTicket(userId, createTicketRequest.getTitle(), createTicketRequest.getCategoryId(), createTicketRequest.getDescription());
+        return userService.createTicket(userId, createTicketRequest.getTitle(), createTicketRequest.getCategoryId(),
+                createTicketRequest.getDescription());
     }
 
     @GetMapping("/user/profile")
@@ -90,9 +96,9 @@ public class UserController {
         return userService.getUserProfile(userId);
     }
 
-    @PostMapping("/user/profile")
+    @PatchMapping("/user/profile")
     public ResponseEntity<String> updateUserProfile(HttpServletRequest request,
-            @RequestBody UserProfileResponse userProfile) {
+            @RequestBody UserUpdateProfileRequest userProfile) {
         Long userId = jwtUtil.extractUserIdFromRequest(request);
         return userService.updateUserProfile(userProfile, userId);
     }
@@ -103,11 +109,17 @@ public class UserController {
         return userService.getUserStatistics(userId);
     }
 
-    @PutMapping("/user/change-password")
-    public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody String newPassword,
-            @RequestBody String oldPassword) {
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            HttpServletRequest request,
+            @RequestBody ChangePasswordRequest passwordRequest) {
+
         Long userId = jwtUtil.extractUserIdFromRequest(request);
-        return userService.changePassword(userId, oldPassword, newPassword);
+
+        return userService.changePassword(
+                userId,
+                passwordRequest.getOldPassword(),
+                passwordRequest.getNewPassword());
     }
 
 }

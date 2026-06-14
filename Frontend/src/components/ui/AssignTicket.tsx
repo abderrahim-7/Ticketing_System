@@ -2,19 +2,19 @@ import { useState } from "react";
 import { UserPlus, X } from "lucide-react";
 
 interface Props {
-  name: string;
+  title: string;
   category: string;
   description: string;
   agent: string;
   user: string;
-  status: "pending" | "in progress" | "rejected" | "done";
+  status: "PENDING" | "IN_PROGRESS" | "REJECTED" | "DONE";
 
   onReject: () => void;
   onAssign: () => void;
 }
 
 const AssignTicket = ({
-  name,
+  title,
   category,
   description,
   agent,
@@ -29,10 +29,10 @@ const AssignTicket = ({
   const isLong = description.length > MAX_LENGTH;
 
   const statusColors: any = {
-    pending: "bg-yellow-100 text-yellow-700",
-    "in progress": "bg-blue-100 text-blue-700",
-    rejected: "bg-red-100 text-red-700",
-    done: "bg-green-100 text-green-700",
+    PENDING: "bg-yellow-100 text-yellow-700",
+    IN_PROGRESS: "bg-blue-100 text-blue-700",
+    REJECTED: "bg-red-100 text-red-700",
+    DONE: "bg-green-100 text-green-700",
   };
 
   return (
@@ -40,9 +40,9 @@ const AssignTicket = ({
       {/* TOP ROW */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-base font-semibold text-gray-800">{name}</h2>
+          <h2 className="text-base font-semibold text-gray-800">{title}</h2>
 
-          <div className="text-sm text-gray-500 max-w-[80%]">
+          <div className="text-sm text-gray-500 max-w-[100%]">
             {expanded || !isLong
               ? description
               : description.slice(0, MAX_LENGTH) + "..."}
@@ -88,7 +88,7 @@ const AssignTicket = ({
           {/* AGENT */}
           <span className="text-gray-600">
             <span className="font-medium">Agent:</span>{" "}
-            {agent === "" ? "----" : agent}
+            {agent === "" || agent === null ? "----" : agent}
           </span>
         </div>
 
