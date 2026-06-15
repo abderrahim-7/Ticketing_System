@@ -384,7 +384,7 @@ const Monitor = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, name: string) => [value, name]}
+                  formatter={(value, name) => [value ?? 0, String(name)]}
                   contentStyle={{
                     borderRadius: "12px",
                     border: "none",
