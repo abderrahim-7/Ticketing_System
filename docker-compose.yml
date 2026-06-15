@@ -31,13 +31,15 @@ services:
     volumes:
       - myData:/var/lib/mysql
     ports : 
-      - 3307:3306
+      - 3306:3306
     networks :
       - myNetwork
 
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
     
   redis: 
     image : redis

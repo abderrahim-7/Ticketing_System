@@ -11,43 +11,34 @@ import com.example.demo.service.EmailService;
 @Service
 public class EmailServiceImpl implements EmailService {
 
-
     @Autowired
     private JavaMailSender MailSender;
 
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    
-    public void sendVerificationEmail(String to , String token){
+    public void sendVerificationEmail(String to, String token) {
 
-
-        String link = "http://localhost:8080/verify?token="+token;
+        String link = "http://localhost:8080/verify?token=" + token;
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(to);
         mailMessage.setSubject("verify your account");
-        mailMessage.setText("Click the link to verify your account: "+link);    
-        
+        mailMessage.setText("Click the link to verify your account: " + link);
+
         MailSender.send(mailMessage);
     }
 
     public void sendResetPasswordEmail(String to, String token) {
 
-        String link = frontendUrl + "/reset-password?token=" + token;
+        String link = "http://localhost:3000/reset-password?token=" + token;
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(to);
         mailMessage.setSubject("Reset your password");
-        mailMessage.setText("Click the link to reset your password: "+ link);
-        
+        mailMessage.setText("Click the link to reset your password: " + link);
+
         MailSender.send(mailMessage);
 
-
-
-
     }
-
-
-
 
 }
