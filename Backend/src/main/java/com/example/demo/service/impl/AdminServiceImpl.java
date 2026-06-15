@@ -82,7 +82,7 @@ public class AdminServiceImpl implements AdminService {
                 .map(u -> {
                     u.setEnabled(false);
                     userRepository.save(u);
-                    return ResponseEntity.ok(Map.of("message", "user disabled", "id", String.valueOf(u.getId())));
+                    return ResponseEntity.ok(Map.of("message", "user  disabled", "id", String.valueOf(u.getId())));
                 })
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
