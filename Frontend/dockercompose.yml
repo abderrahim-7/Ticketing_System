@@ -1,0 +1,56 @@
+version : '3.8'
+
+services: 
+  backend: 
+    image: abderrahim717/ticketing_backend:latest
+    networks:
+      - myNetwork
+    ports: 
+      - 8080:8080
+    container_name : backend
+
+    env_file:
+      - ./Backend/.env
+
+    depends_on: 
+      - mysql
+      - redis
+
+  frontend:
+    image: abderrahim717/ticketing_frontend:latest
+    networks:
+      - myNetwork
+    ports: 
+      - 3000:80
+    container_name : frontend
+
+
+  mysql:
+    image : mysql
+    container_name : mydatabase
+    volumes:
+      - myData:/var/lib/mysql
+    ports : 
+      - 3307:3306
+    networks :
+      - myNetwork
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+    
+  redis: 
+    image : redis
+    container_name : redis-container
+    ports : 
+      - 6379:6379
+    networks: 
+      - myNetwork
+
+volumes : 
+  myData:
+      driver : local
+
+networks:
+  myNetwork :
+       driver : bridge
